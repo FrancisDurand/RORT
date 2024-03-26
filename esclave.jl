@@ -18,9 +18,9 @@ function esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
     @variable(m, x[1:O], Bin)
     @variable(m, y[1:R], Bin)
 
-    @constraint(m, sum(x[o,p] for o = 1:O) <= Capa[p]) # p a une capacité limité
+    @constraint(m, sum(x[o] for o = 1:O) <= Capa[p]) # p a une capacité limité
     for i in 1:N
-        @constraint(m, sum(s[i][r]*y[r,p] for r = 1:R) >= sum(q[i][o]*x[o,p] for o in 1:O)) #Chaque picker doit pouvoir remplir les commandes qui lui sont attribuées avec les racks dont il dispose
+        @constraint(m, sum(s[i][r]*y[r] for r = 1:R) >= sum(q[i][o]*x[o] for o in 1:O)) #Chaque picker doit pouvoir remplir les commandes qui lui sont attribuées avec les racks dont il dispose
     end
     
     # Fonction objective si on maximize le nombre de commande
@@ -42,7 +42,7 @@ end
 function generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
     xk_transpose = []
     yk_transpose = []
-    Vk = (Vector{Int}[], Vector{Int}[])
+    Vk = (Vector{Vector{Int}}[], Vector{Vector{Int}}[])
 
     # Fusion des listes x et y en Vk
     for p in 1:P
@@ -51,6 +51,6 @@ function generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
         push!(yk_transpose, [y[r] for r in 1:R])
     end
     push!(Vk[1], [[xk_transpose[p][o] for o in 1:O] for  p in 1:P])
-    push!(Vk[1], [[yk_transpose[p][r] for r in 1:R] for p in 1:P])
+    push!(Vk[2], [[yk_transpose[p][r] for r in 1:R] for p in 1:P])
     return Vk
 end
