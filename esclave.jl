@@ -9,7 +9,7 @@ Capa le vecteur des capacités des pickers
 """
 
 function esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
-    println("Lancement Resolution PLNE pour le sou problème esclave : ", p)
+    println("Lancement Resolution PLNE pour le sous problème esclave : ", p)
 
     # Créer le modèle
     # m = Model(optimizer_with_attributes(CPLEX.Optimizer, "CPX_PARAM_TILIM" => temps_max))
@@ -40,13 +40,17 @@ function esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
 end
 
 function generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
+    xk_transpose = []
+    yk_transpose = []
     Vk = (Vector{Int}[], Vector{Int}[])
 
     # Fusion des listes x et y en Vk
     for p in 1:P
         _,x,y = esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
-        push!(Vk[1], [x[o][p] for o in 1:O])
-        push!(Vk[2], [y[r][p] for r in 1:R])
+        push!(xk_transpose, [x[o] for o in 1:O])
+        push!(yk_transpose, [y[r] for r in 1:R])
     end
+    push!(Vk[1], [[xk_transpose[p][o] for o in 1:O] for  p in 1:P])
+    push!(Vk[1], [[yk_transpose[p][r] for r in 1:R] for p in 1:P])
     return Vk
 end
