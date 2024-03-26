@@ -50,6 +50,6 @@ function generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
         push!(xk_transpose, [x[o] for o in 1:O])
         push!(yk_transpose, [y[r] for r in 1:R])
     end
-    Vk = ([[xk_transpose[p][o] for o in 1:O] for  p in 1:P], [[yk_transpose[p][r] for r in 1:R] for p in 1:P])
+    Vk = ([[xk_transpose[p][o] for p in 1:P] for  o in 1:O], [[yk_transpose[p][r] for p in 1:P] for r in 1:R])
     return Vk
 end

@@ -7,11 +7,15 @@ include("esclave.jl")
 function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
     # Creer la première solution
     v = []
+
     #Il faut v non vide au début, genre mettre un élément admissible
+    push!(v, generer_vk(N, R, O, q, s, OF, OS, Capa, P, [0 for o in 1:O], [0 for r in 1:R])) #est ce que ça marche comme  sol initiale ???
 
     max_iteration = 100
     iter_number = 0
     opt = false
+    println("AFFICHAGE de v")
+    println(v)
 
     while !opt && iter_number < max_iteration
         iter_number += 1

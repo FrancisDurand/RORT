@@ -1,13 +1,14 @@
 
 
 function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
-    println("Lancement Resolution PLNE")
+    println("Lancement Resolution master problem")
 
     # Créer le modèle
     m = Model(optimizer_with_attributes(CPLEX.Optimizer, "CPX_PARAM_TILIM" => temps_max))
     # m = JuMP.Model(CPLEX.Optimizer)
 
     V = size(v)[1]
+    println("taille de v : ", V)
 
     @variable(m, lambda[1:V])
 
@@ -24,9 +25,10 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
     end
 
     @constraint(m, sum(lambda[k] for k = 1:V) == 1) # Convexité
-    @constraint(m, [k in 1:V], lambda[i=k] >= 0)
+    @constraint(m, [k in 1:V], lambda[k] >= 0)
     
     # Fonction objective si on maximize le nombre de commande
+
     @objective(m, Max, sum(lambda[k] * v[k][1][o][p] for p = 1:P for k = 1:V for o in OS ))
 
     # # Fonction objective si on minimize le nombre de racks
