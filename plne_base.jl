@@ -52,13 +52,15 @@ function resolution(N, R, O, q, s, OF, OS, P, Capa, temps_max)
         sol_y = JuMP.value.(y)
 
         # Si la solution optimale n'est pas obtenue
-        if termination_status(m) ≠ MOI.OPTIMAL
+        # if termination_status(m) ≠ MOI.OPTIMAL
 
-            # Le solveur fournit la meilleure borne supérieure connue sur la solution optimale
-            bound = JuMP.objective_bound(m)
-        end 
+        #     # Le solveur fournit la meilleure borne supérieure connue sur la solution optimale
+            
+        # end 
         return objectiveValue, sol_x, sol_y
     else
         println("Aucun solution trouvée dans le temps imparti.")
+        bound = JuMP.objective_bound(m)
+        return bound,bound, bound
     end
 end

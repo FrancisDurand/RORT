@@ -110,7 +110,7 @@ function parse_data(nom_fichier::String, )
 
     capa_picker = zeros(P)
     for p in 1:P # parcourt les pickers
-        capa_picker[p] = 12
+        capa_picker[p] = 50
     end
     Data.Capa = capa_picker
 
