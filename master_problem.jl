@@ -5,34 +5,25 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
 
     # Créer le modèle
     m = Model(optimizer_with_attributes(CPLEX.Optimizer, "CPX_PARAM_TILIM" => temps_max))
-    # m = JuMP.Model(CPLEX.Optimizer)
+    #m = JuMP.Model(CPLEX.Optimizer)
 
     V = size(v)[1]
     println("taille de v : ", V)
 
     @variable(m, lambda[1:V])
 
-    for o in OF
-        @constraint(m, sum(lambda[k] * v[k][1][o][p] for p = 1:P, k = 1:V) == 1) # les commandes primaires doivent être satisfaites
-    end
+    @constraint(m, c1[o in OF], sum(lambda[k] * v[k][1][o][p] for p = 1:P, k = 1:V) == 1) # les commandes primaires doivent être satisfaites
 
-    for o in OS
-        @constraint(m, sum(lambda[k] * v[k][1][o][p]  for p = 1:P, k = 1:V) <= 1) # Les commandes secondaires peuvent être satisfaites
-    end
-    
-    for r in 1:R
-        @constraint(m, sum(lambda[k] * v[k][2][r][p]  for p = 1:P, k = 1:V) <= 1) # Chaque rack est utilisé au plus une fois
-    end
+    @constraint(m, c2[o in OS], sum(lambda[k] * v[k][1][o][p]  for p = 1:P, k = 1:V) <= 1) # Les commandes secondaires peuvent être satisfaites
+ 
+    @constraint(m, c3[r in 1:R], sum(lambda[k] * v[k][2][r][p]  for p = 1:P, k = 1:V) <= 1) # Chaque rack est utilisé au plus une fois
 
-    @constraint(m, sum(lambda[k] for k = 1:V) == 1) # Convexité
+
+    #@constraint(m, sum(lambda[k] for k = 1:V) == 1) # Convexité
     @constraint(m, [k in 1:V], lambda[k] >= 0)
     
     # Fonction objective si on maximize le nombre de commande
-
     @objective(m, Max, sum(lambda[k] * v[k][1][o][p] for p = 1:P for k = 1:V for o in OS ))
-
-    # # Fonction objective si on minimize le nombre de racks
-    # @objective(m, Min, sum(y[r,p] for r in 1:R for p in 1:P))
 
     # Résoudre le modèle
     optimize!(m)
@@ -45,7 +36,17 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
 
         #println("Solution : ")
         sol_lambda = JuMP.value.(lambda)
-        dual_value = m.solution.get_dual_values()
+        
+        alpha = [0 for o = 1:O]
+        for o = 1:O
+            if o in OF
+                alpha[o] = dual(c1[o])
+            end
+            if o in OS
+                alpha[o] = dual(c2[o])
+            end
+        end
+        beta = [dual(c3[r]) for r = 1:R]
 
         # Si la solution optimale n'est pas obtenue
         if termination_status(m) ≠ MOI.OPTIMAL
@@ -53,7 +54,8 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
             # Le solveur fournit la meilleure borne supérieure connue sur la solution optimale
             bound = JuMP.objective_bound(m)
         end 
-        return objectiveValue, sol_lambda, dual_value
+        dual_value = 0
+        return objectiveValue, sol_lambda, alpha, beta
     else
         println("Aucun solution trouvée dans le temps imparti.")
     end

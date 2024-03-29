@@ -15,13 +15,15 @@ function main()
     if false
         println("test plne base")
         objective_sol, x_sol, y_sol = resolution(data.N, data.R, data.O, data.Q, data.S, data.FO, data.SO, data.P, data.Capa, temps_max)
+        println(x_sol)
+        println(y_sol)
     end
 
     if true
         println("test decomposition")
         decomposition_DW_pickers(data.N, data.R, data.O, data.Q, data.S, data.FO, data.SO, data.P, data.Capa, temps_max)
     end
-    
+
 end
 
 main()
