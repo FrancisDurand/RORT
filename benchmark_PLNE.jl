@@ -25,7 +25,7 @@ const instance_list = (
 
 
 
-temps_max = 6000000000
+temps_max = 60
 
 for instance ∈ instance_list
     data = instance
@@ -34,6 +34,5 @@ for instance ∈ instance_list
     start_time = time()
     objective_sol, x_sol, y_sol = resolution(data.N, data.R, data.O, data.Q, data.S, data.FO, data.SO, data.P, data.Capa, temps_max)
     println("RESOLUTION instance : N = ", data.N, ", R = ", data.R, ", O = ", data.O, ", RS = ", data.RS, ", objectif =", objective_sol, ", Time = ", time()-start_time)
-    sleep(1)
 end
 
