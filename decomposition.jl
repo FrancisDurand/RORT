@@ -45,7 +45,7 @@ function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
     x_ini, y_ini = generate_initial_solution(N, R, O, q, s, OF, OS, P, Capa)
     push!(v, (x_ini, y_ini))
 
-    max_iteration = 1
+    max_iteration = 100
     iter_number = 0
     opt = false
     println("AFFICHAGE de v")
@@ -58,20 +58,45 @@ function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
         objectiveValue, sol_lambda, alpha, beta = master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
 
         println("afficher")
-        println(objectiveValue)
+        println("valeur objectif actuel : ", objectiveValue, "\n")
         println(sol_lambda)
         println(alpha)
         println(beta)
 
+
+        # C'est une tentative de coder la condition d'arret mais ça marhce pas
+        # b = true
+        # for o in 1:O
+        #     if alpha[o] >= 0 + 1e-6
+        #         b = false
+        #     end
+        # end
+        # if b
+        #     for r in 1:R
+        #         if beta[r] >= 0 + 1e-6
+        #             b = false
+        #         end
+        #     end
+        # end
+        # opt = b
         # resoudre les sous-problemes
         #alpha =
         #beta =
-        #nouveau_v = generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
+        nouveau_v = generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
 
         #calcul coûts réduits ?
 
         #update de la liste v
+        push!(v, nouveau_v)
+        
 
         #Garder au fur et à mesure les meilleure borne et meilleure solution admissible
     end
+    objectiveValue, sol_lambda, alpha, beta = master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
+
+    println("afficher")
+    println("valeur objectif actuel : ", objectiveValue)
+    println(sol_lambda)
+    println(alpha)
+    println(beta)
 end
