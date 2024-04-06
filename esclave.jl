@@ -43,13 +43,15 @@ function generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
     xk_transpose = []
     yk_transpose = []
     Vk = (Vector{Vector{Int}}[], Vector{Vector{Int}}[])
+    cred_plus_gamma = 0
 
     # Fusion des listes x et y en Vk
     for p in 1:P
-        _,x,y = esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
+        objective_value,x,y = esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
         push!(xk_transpose, [x[o] for o in 1:O])
         push!(yk_transpose, [y[r] for r in 1:R])
+        cred_plus_gamma += objective_value
     end
     Vk = ([[xk_transpose[p][o] for p in 1:P] for  o in 1:O], [[yk_transpose[p][r] for p in 1:P] for r in 1:R])
-    return Vk
+    return Vk, cred_plus_gamma
 end

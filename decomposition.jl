@@ -40,63 +40,43 @@ end
 function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
     # Creer la première solution
     v = []
+    liste_borne_inf = []
+    liste_borne_sup = []
 
-    #Il faut v non vide au début, genre mettre un élément admissible
+    #solution initiale
     x_ini, y_ini = generate_initial_solution(N, R, O, q, s, OF, OS, P, Capa)
     push!(v, (x_ini, y_ini))
 
-    max_iteration = 100
+    max_iteration = 10
     iter_number = 0
     opt = false
-    println("AFFICHAGE de v")
-    println(v)
 
     while !opt && iter_number < max_iteration
         iter_number += 1
 
         # resoudre le probleme maitre
-        objectiveValue, sol_lambda, alpha, beta = master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
+        objectiveValue, sol_lambda, alpha, beta, gamma = master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
 
-        println("afficher")
-        println("valeur objectif actuel : ", objectiveValue, "\n")
-        println(sol_lambda)
-        println(alpha)
-        println(beta)
-
-
-        # C'est une tentative de coder la condition d'arret mais ça marhce pas
-        # b = true
-        # for o in 1:O
-        #     if alpha[o] >= 0 + 1e-6
-        #         b = false
-        #     end
-        # end
-        # if b
-        #     for r in 1:R
-        #         if beta[r] >= 0 + 1e-6
-        #             b = false
-        #         end
-        #     end
-        # end
-        # opt = b
         # resoudre les sous-problemes
-        #alpha =
-        #beta =
-        nouveau_v = generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
+        nouveau_v, cred_plus_gamma = generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
 
-        #calcul coûts réduits ?
+        #calcul coûts réduits
+        cred = cred_plus_gamma + gamma
 
-        #update de la liste v
-        push!(v, nouveau_v)
-        
+        if cred > 10e-6
+            #update de la liste v
+            push!(v, nouveau_v)
+        else
+            opt = true
+        end
+            
+        #Garder au fur et à mesure les bornes
+        borne_inf = objectiveValue
+        borne_sup = objectiveValue + cred
 
-        #Garder au fur et à mesure les meilleure borne et meilleure solution admissible
+        push!(liste_borne_inf, borne_inf)
+        push!(liste_borne_sup, borne_sup)
     end
-    objectiveValue, sol_lambda, alpha, beta = master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
 
-    println("afficher")
-    println("valeur objectif actuel : ", objectiveValue)
-    println(sol_lambda)
-    println(alpha)
-    println(beta)
+    return liste_borne_inf, liste_borne_sup
 end

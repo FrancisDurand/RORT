@@ -19,7 +19,8 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
     @constraint(m, c3[r in 1:R], sum(lambda[k] * v[k][2][r][p]  for p = 1:P, k = 1:V) <= 1) # Chaque rack est utilisé au plus une fois
 
 
-    @constraint(m, sum(lambda[k] for k = 1:V) == 1) # Convexité
+    @constraint(m, c4, sum(lambda[k] for k = 1:V) == 1) # Convexité
+
     @constraint(m, [k in 1:V], lambda[k] >= 0)
     
     # Fonction objective si on maximize le nombre de commande
@@ -47,6 +48,7 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
             end
         end
         beta = [dual(c3[r]) for r = 1:R]
+        gamma = dual(c4)
 
         # Si la solution optimale n'est pas obtenue
         if termination_status(m) ≠ MOI.OPTIMAL
@@ -55,7 +57,7 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
             bound = JuMP.objective_bound(m)
         end 
         dual_value = 0
-        return objectiveValue, sol_lambda, alpha, beta
+        return objectiveValue, sol_lambda, alpha, beta, gamma
     else
         println("Aucun solution trouvée dans le temps imparti.")
     end
