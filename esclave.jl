@@ -24,7 +24,8 @@ function esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
     end
     
     # Fonction objective si on maximize le nombre de commande
-    @objective(m, Max, sum(x[o] for o in OS) - sum(alpha[o]*x[o] for o in OS) - sum(alpha[o]*x[o] for o in OF) - sum(beta[r]*y[r] for r in R))
+    # @objective(m, Max, sum(x[o] for o in OS) - sum(alpha[o]*x[o] for o in OS) - sum(alpha[o]*x[o] for o in OF) - sum(beta[r]*y[r] for r in R))
+    @objective(m, Max, sum(x[o] for o in OS))
 
     # Résoudre le modèle
     optimize!(m)
@@ -50,7 +51,12 @@ function generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
         objective_value,x,y = esclave(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
         push!(xk_transpose, [x[o] for o in 1:O])
         push!(yk_transpose, [y[r] for r in 1:R])
-        cred_plus_gamma += objective_value
+        println(alpha)
+        println(x)
+        println(beta)
+        println(y)
+        cred_plus_gamma += objective_value - sum(alpha[o]*x[o] for o in OS) - sum(alpha[o]*x[o] for o in OF) - sum(beta[r]*y[r] for r in R)
+        # cred_plus_gamma += objective_value
     end
     Vk = ([[xk_transpose[p][o] for p in 1:P] for  o in 1:O], [[yk_transpose[p][r] for p in 1:P] for r in 1:R])
     return Vk, cred_plus_gamma

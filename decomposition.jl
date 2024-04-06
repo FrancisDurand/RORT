@@ -47,7 +47,7 @@ function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
     x_ini, y_ini = generate_initial_solution(N, R, O, q, s, OF, OS, P, Capa)
     push!(v, (x_ini, y_ini))
 
-    max_iteration = 10
+    max_iteration = 100
     iter_number = 0
     opt = false
 
@@ -61,7 +61,7 @@ function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
         nouveau_v, cred_plus_gamma = generer_vk(N, R, O, q, s, OF, OS, Capa, P, alpha, beta)
 
         #calcul coûts réduits
-        cred = cred_plus_gamma + gamma
+        cred = cred_plus_gamma - gamma
 
         if cred > 10e-6
             #update de la liste v
@@ -73,6 +73,9 @@ function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
         #Garder au fur et à mesure les bornes
         borne_inf = objectiveValue
         borne_sup = objectiveValue + cred
+
+        println("borne inf = ", borne_inf)
+        println("Borne sup = ", borne_sup)
 
         push!(liste_borne_inf, borne_inf)
         push!(liste_borne_sup, borne_sup)
