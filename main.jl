@@ -8,7 +8,7 @@ include("decomposition.jl")
 
 function main()
     println("----------------------------------------------------------------------------")
-    #data = parse_data("data/Data_test_N12_R12_O12_RS8.txt")
+    # data = parse_data("data/Data_test_N12_R12_O12_RS8.txt")
     data = parse_data("data/Data_test_N5_R4_O3_RS2.txt")
     temps_max = 60
 
