@@ -56,8 +56,8 @@ function esclave_MLR(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
     end
     
     # Fonction objective si on maximize le nombre de commande
-    # @objective(m, Max, sum(x[o] for o in OS) - sum(alpha[o]*x[o] for o in OS) - sum(alpha[o]*x[o] for o in OF) - sum(beta[r]*y[r] for r in R))
-    @objective(m, Max, sum(x[o] for o in OS) + sum(alpha[o]*x[o] for o in OS) + sum(alpha[o]*x[o] for o in OF) + sum(beta[r]*y[r] for r in R))
+    @objective(m, Max, sum(x[o] for o in OS) - sum(alpha[o]*x[o] for o in OS) - sum(alpha[o]*x[o] for o in OF) - sum(beta[r]*y[r] for r in R))
+    # @objective(m, Max, sum(x[o] for o in OS) + sum(alpha[o]*x[o] for o in OS) + sum(alpha[o]*x[o] for o in OF) + sum(beta[r]*y[r] for r in R))
     # @objective(m, Max, sum(x[o] for o in OS))
 
     # Résoudre le modèle
