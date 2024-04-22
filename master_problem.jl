@@ -41,14 +41,14 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
         alpha = [0 for o = 1:O]
         for o = 1:O
             if o in OF
-                alpha[o] = dual(c1[o])
+                alpha[o] = shadow_price(c1[o])
             end
             if o in OS
-                alpha[o] = dual(c2[o])
+                alpha[o] = shadow_price(c2[o])
             end
         end
-        beta = [dual(c3[r]) for r = 1:R]
-        gamma = dual(c4)
+        beta = [shadow_price(c3[r]) for r = 1:R]
+        gamma = shadow_price(c4)
 
         # Si la solution optimale n'est pas obtenue
         if termination_status(m) ≠ MOI.OPTIMAL
