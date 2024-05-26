@@ -6,6 +6,7 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
     # Créer le modèle
     m = Model(optimizer_with_attributes(CPLEX.Optimizer, "CPX_PARAM_TILIM" => temps_max))
     #m = JuMP.Model(CPLEX.Optimizer)
+    set_silent(m)
 
     V = size(v)[1]
     println("taille de v : ", V)
@@ -32,13 +33,13 @@ function master_problem(N, R, O, q, s, OF, OS, P, Capa, temps_max, v)
     ### Si une solution a été trouvée dans le temps limite
     if primal_status(m) == MOI.FEASIBLE_POINT
         # Afficher la valeur de l'objectif
-        objectiveValue = round(Int, JuMP.objective_value(m))
+        objectiveValue = JuMP.objective_value(m)
         #println("Valeur de l'objectif : ", round(Int, JuMP.objective_value(m)))
 
         #println("Solution : ")
         sol_lambda = JuMP.value.(lambda)
         
-        alpha = [0 for o = 1:O]
+        alpha = [0.0 for o = 1:O]
         for o = 1:O
             if o in OF
                 alpha[o] = shadow_price(c1[o])

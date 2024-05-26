@@ -47,7 +47,7 @@ function decomposition_DW_pickers(N, R, O, q, s, OF, OS, P, Capa, temps_max)
     x_ini, y_ini = generate_initial_solution(N, R, O, q, s, OF, OS, P, Capa)
     push!(v, (x_ini, y_ini))
 
-    max_iteration = 10
+    max_iteration = 5
     iter_number = 0
     opt = false
 

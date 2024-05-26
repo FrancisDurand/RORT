@@ -53,7 +53,7 @@ function parse_data(nom_fichier::String, )
     println("Lecture des donnees")
     lines = readlines(nom_fichier)  
 
-    P = 2 
+    P = 4 
 
     line=lines[1]
     line_decompose=split(line)
@@ -118,7 +118,7 @@ function parse_data(nom_fichier::String, )
     second_order = []
     for o in 1:O # parcourt les orders
         tirage = rand()
-        if rand() <= 0.5
+        if o % 2 == 0
           push!(first_order,o)
         else
           push!(second_order,o)

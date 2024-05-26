@@ -15,6 +15,7 @@ function esclave_MLR(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
     # Créer le modèle
     # m = Model(optimizer_with_attributes(CPLEX.Optimizer, "CPX_PARAM_TILIM" => temps_max))
     m = JuMP.Model(CPLEX.Optimizer)
+    set_silent(m)
 
     @variable(m, x[1:O], Bin)
     @variable(m, y[1:R], Bin)
@@ -31,7 +32,7 @@ function esclave_MLR(N, R, O, q, s, OF, OS, Capa, p, alpha, beta)
     # Résoudre le modèle
     optimize!(m)
     # Afficher la valeur de l'objectif
-    objectiveValue = round(Int, JuMP.objective_value(m))
+    objectiveValue = JuMP.objective_value(m)
     #println("Valeur de l'objectif : ", round(Int, JuMP.objective_value(m)))
 
     #println("Solution : ")
